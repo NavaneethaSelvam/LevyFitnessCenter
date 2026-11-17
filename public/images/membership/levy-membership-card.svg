@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200" fill="none">
+  <defs>
+    <linearGradient id="backdrop" x1="120" y1="80" x2="1460" y2="1110" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#181D19"/>
+      <stop offset=".48" stop-color="#0E110F"/>
+      <stop offset="1" stop-color="#070907"/>
+    </linearGradient>
+    <linearGradient id="card" x1="405" y1="310" x2="1250" y2="940" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#252B26"/>
+      <stop offset=".42" stop-color="#111511"/>
+      <stop offset="1" stop-color="#080A08"/>
+    </linearGradient>
+    <linearGradient id="cardBack" x1="330" y1="225" x2="1270" y2="850" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#303630"/>
+      <stop offset="1" stop-color="#101310"/>
+    </linearGradient>
+    <linearGradient id="lime" x1="1060" y1="510" x2="1300" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D9FF73"/>
+      <stop offset="1" stop-color="#9FCB32"/>
+    </linearGradient>
+    <radialGradient id="light" cx="0" cy="0" r="1" gradientTransform="matrix(460 300 -300 460 1140 235)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C8F34B" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#C8F34B" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softBlur" x="0" y="0" width="1600" height="1200" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="42"/>
+    </filter>
+    <filter id="shadow" x="220" y="180" width="1320" height="990" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="24"/>
+      <feOffset dy="34"/>
+      <feComponentTransfer>
+        <feFuncA slope=".62" type="linear"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <pattern id="floor" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M0 35.5h36M35.5 0v36" stroke="#C7D0C3" stroke-opacity=".035"/>
+    </pattern>
+    <pattern id="barcode" width="12" height="60" patternUnits="userSpaceOnUse">
+      <path d="M1 0v60M4 0v60M10 0v60" stroke="#E8EEE3" stroke-opacity=".72" stroke-width="2"/>
+    </pattern>
+  </defs>
+  <path fill="url(#backdrop)" d="M0 0h1600v1200H0z"/>
+  <path fill="url(#light)" d="M0 0h1600v1200H0z"/>
+  <g filter="url(#softBlur)" opacity=".55">
+    <circle cx="230" cy="300" r="120" fill="#C8F34B" fill-opacity=".12"/>
+    <circle cx="1370" cy="430" r="175" fill="#73815A" fill-opacity=".15"/>
+    <path d="M80 200h160v38H80zM1260 225h260v34h-260z" fill="#B9C1B5" fill-opacity=".25"/>
+  </g>
+  <path fill="url(#floor)" d="M0 760h1600v440H0z"/>
+  <path d="M0 760c310-82 571-33 810 12 312 59 535 53 790-31v459H0V760Z" fill="#080A08" fill-opacity=".56"/>
+  <path d="M0 760c310-82 571-33 810 12 312 59 535 53 790-31" stroke="#C8F34B" stroke-opacity=".12" stroke-width="2"/>
+
+  <g transform="rotate(8 770 530)" opacity=".88">
+    <rect x="320" y="255" width="930" height="570" rx="34" fill="#080A08" stroke="#AAB3A7" stroke-opacity=".6" stroke-width="3"/>
+    <path d="M350 285h870v510H350z" fill="url(#cardBack)"/>
+    <path d="M950 285h270v510H950z" fill="#C8F34B" fill-opacity=".05"/>
+    <path d="M1040 285h180v510h-180z" fill="#E9EFE4" fill-opacity=".04"/>
+    <path d="M1092 300v475M1130 300v475" stroke="#C8F34B" stroke-opacity=".48" stroke-width="3"/>
+    <path d="M400 682h175v54H400z" fill="url(#barcode)" opacity=".7"/>
+    <path d="M400 757h260M400 772h188" stroke="#C2C9BE" stroke-opacity=".35" stroke-width="5"/>
+  </g>
+
+  <g transform="rotate(-7 800 630)" filter="url(#shadow)">
+    <rect x="340" y="365" width="940" height="560" rx="36" fill="#050705" stroke="#C8F34B" stroke-opacity=".66" stroke-width="3"/>
+    <rect x="357" y="382" width="906" height="526" rx="25" fill="url(#card)"/>
+    <path d="M876 382h387v526H730l146-526Z" fill="#C8F34B" fill-opacity=".055"/>
+    <path d="m1035 382 228 0v526H888l147-526Z" fill="url(#lime)"/>
+    <path d="m1093 382 59 0-148 526h-62l151-526Z" fill="#0B0E0A" fill-opacity=".9"/>
+    <path d="m1200 382 63 0v526h-214l151-526Z" fill="#111511" fill-opacity=".84"/>
+    <path d="M1004 409 856 878" stroke="#E5FFAC" stroke-opacity=".88" stroke-width="3"/>
+
+    <g transform="translate(410 427)">
+      <rect width="72" height="56" rx="10" fill="#090B09" stroke="#C8F34B" stroke-width="2"/>
+      <path d="M17 35h38M22 28v14m-6-11v8m34-11v14m6-11v8M36 35V17m-7 7 7-7 7 7" stroke="#C8F34B" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    </g>
+    <text x="498" y="451" fill="#D1D8CC" font-family="Arial, sans-serif" font-size="21" font-weight="700" letter-spacing="4">LEVY</text>
+    <text x="499" y="475" fill="#AEB7A9" font-family="Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="2.6">FITNESS CENTER</text>
+
+    <text x="414" y="590" fill="#F0F1EC" font-family="Arial, sans-serif" font-size="60" font-weight="800" letter-spacing="1">GYM</text>
+    <text x="414" y="655" fill="#C8F34B" font-family="Arial, sans-serif" font-size="58" font-weight="800" letter-spacing="1">MEMBER</text>
+    <text x="418" y="702" fill="#B6BEB1" font-family="Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="5">MEMBERSHIP ACCESS</text>
+
+    <path d="M420 778h190v52H420z" fill="url(#barcode)" opacity=".8"/>
+    <path d="M420 852h215M420 868h147" stroke="#AEB7A9" stroke-opacity=".48" stroke-width="5"/>
+    <circle cx="1220" cy="866" r="8" fill="#C8F34B"/>
+  </g>
+
+  <path d="M90 1050h260" stroke="#C8F34B" stroke-opacity=".46" stroke-width="2"/>
+  <text x="90" y="1088" fill="#E1E7DB" fill-opacity=".68" font-family="Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="5">YOUR PLACE TO GET STRONGER</text>
+</svg>

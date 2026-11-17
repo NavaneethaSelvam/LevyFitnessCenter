@@ -1,0 +1,43 @@
+LEVY FITNESS CENTER - GYM IMAGE SOURCES
+
+All photos below are stored locally in this folder. Pexels marks these photos
+free to use under its published license; attribution is not required.
+License: https://www.pexels.com/license/
+
+File                          Section / use                 Pexels source
+about-gym-interior.jpg        About page hero               https://www.pexels.com/photo/modern-gym-interior-with-exercise-machines-40371849/
+cardio-training.jpg           Cardio program card           https://www.pexels.com/photo/strong-sportsman-using-treadmill-for-cardio-workout-in-gym-3888343/
+contact-gym-interior.jpg      Contact page hero             https://www.pexels.com/photo/gym-equipment-inside-the-fitness-gym-9545914/
+functional-training.jpg       Functional training card      https://www.pexels.com/photo/man-in-blue-tank-top-and-blue-shorts-doing-push-up-using-a-fitness-ball-4720558/
+gallery-hero.jpg              Gallery page video poster     https://www.pexels.com/photo/muscular-man-lifting-a-barbell-18060117/
+hero-male-athlete.jpg         Home page hero                 https://www.pexels.com/photo/man-exercising-with-dumbbells-at-gym-16996376/
+membership-gym-floor.jpg      Previous Membership page hero   https://www.pexels.com/photo/a-man-in-purple-shirt-walking-in-the-gym-13104546/
+../membership/levy-membership-card.svg Membership page hero    Original Levy Fitness Center membership-card artwork; created for this project.
+membership-male-athlete.jpg   Previous membership hero       https://www.pexels.com/photo/man-focused-on-gym-workout-with-cable-machine-32695895/
+muscle-building.jpg           Muscle building program card  https://www.pexels.com/photo/man-in-tank-top-practicing-at-gym-17559311/
+personal-training-coaching.jpg Personal training program card https://www.pexels.com/photo/personal-trainer-and-a-man-sitting-on-a-gym-machine-smiling-and-fist-bumping-13621289/
+programs-hero-athlete.jpg     Programs page video poster    https://www.pexels.com/photo/bodybuilder-admiring-own-biceps-17210041/
+strength-training.jpg         Strength training program     https://www.pexels.com/photo/strong-sportsman-doing-bench-press-during-workout-in-modern-gym-3837743/
+trainer-male-portrait.jpg     Trainers page hero             https://www.pexels.com/photo/man-in-black-crew-neck-t-shirt-3912944/
+weight-management.jpg         Weight management program     https://www.pexels.com/photo/a-bald-muscular-man-training-at-the-gym-24809783/
+
+Image assignment audit:
+- Home: hero-male-athlete.jpg
+- About: about-gym-interior.jpg
+- Programs: programs-hero-athlete.jpg plus six distinct program card photos
+- Membership: ../membership/levy-membership-card.svg (custom Levy membership-card artwork)
+- Membership feature: existing membership-lifestyle.jpg, unique from the hero
+- Trainers: trainer-male-portrait.jpg plus existing unique profile photos
+- Gallery: gallery-hero.jpg plus existing unique gallery photos
+- Contact: contact-gym-interior.jpg
+
+Each file above is assigned to one section or card only. Existing image assets
+were retained and are not duplicated by this collection.
+
+The PNG contents previously stored under hero-gym.mp4 and
+gym-neon-workout.mp4 were preserved as hero-gym-original.png and
+gym-neon-workout-original.png. Their source and license details were not
+included in the project; these preservation copies are not assigned on the site.
+
+The former personal-training.jpg card image is retained in the library but is
+no longer assigned. Its source and license are recorded in the asset manifest.

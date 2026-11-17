@@ -1,0 +1,38 @@
+LEVY FITNESS CENTER - VIDEO SOURCES
+
+Active local video files:
+
+- public/videos/hero-gym.mp4
+  Home membership CTA background footage downloaded from:
+  https://www.pexels.com/video/motivational-indoor-gym-workout-session-35623348/
+  Direct file:
+  https://videos.pexels.com/video-files/35623348/15096707_2560_1440_25fps.mp4
+  2560x1440, 25 fps, 12 seconds; creator JULLIAN PRODUCTION.
+
+- public/videos/gym-neon-workout.mp4
+  Gallery footage downloaded from:
+  https://www.pexels.com/video/dynamic-workout-in-neon-lit-gym-29569368/
+  Direct file:
+  https://videos.pexels.com/video-files/29569368/12727757_1080_1920_60fps.mp4
+  1080x1920, 60 fps, 18.75 seconds; creator JULLIAN PRODUCTION.
+
+- public/videos/strength-training.mp4
+  Downloaded from Pexels as the requested local file was absent during the
+  project audit (only strength-training.mp4.png was present).
+  Pexels video page:
+  https://www.pexels.com/video/intense-workout-athlete-training-in-gym-34708347/
+  Direct file:
+  https://videos.pexels.com/video-files/34708347/14711565_2560_1440_25fps.mp4
+  2560x1440, 25 fps, 11.64 seconds; creator JULLIAN PRODUCTION.
+
+Pexels lists these clips as free to use under its published license;
+attribution is not required. Review the current license before publishing:
+https://www.pexels.com/license/
+
+The files previously stored as hero-gym.mp4 and gym-neon-workout.mp4 were PNG
+images rather than playable video. Their original bytes are preserved as
+public/images/gym/hero-gym-original.png and
+public/images/gym/gym-neon-workout-original.png. The prior levy-hero-video.mp4
+reference was also absent. All three active videos are hosted locally; do not
+hotlink Pexels footage in production.
+The Home hero now uses its athlete image without a video background.
