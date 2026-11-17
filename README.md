@@ -47,17 +47,26 @@ npm start
 
 `npm start` serves the production build after `npm run build`.
 
-## Enquiry forms
+## Enquiry forms and email notifications
 
-The contact form supports contact enquiries, membership enquiries, and trial
-booking requests. Form submissions are sent through the Next.js server route
-at `/api/forms` to keep the Apps Script URL and shared secret out of browser
-code.
+The shared contact form supports general/contact, personal-training,
+membership, and free-trial enquiries. Contact and membership forms are
+available on `/contact` and `/membership`; selecting the free-trial topic
+reveals the requested date, time, and training interest fields.
 
-Google Sheets submission is not active until the owner creates and authorizes a
-spreadsheet, deploys the Apps Script Web App, and configures the server-side
-environment variables. Follow the [Google Apps Script setup guide](./google-apps-script/README.md)
-for the complete steps.
+Submissions go through the Next.js server route at `/api/forms`. The server
+validates the request and forwards it to Google Apps Script; the script saves
+the enquiry in Google Sheets before attempting an admin notification and
+customer acknowledgement email. Google Sheets is the persistence layer in
+this project; no separate database or admin dashboard is configured. Email
+delivery results are tracked in the sheet, and the form does not claim an
+email was delivered when Apps Script reports a failure.
+
+Admins can reply by entering their response in the `Admin Reply` column in the
+`Enquiries` sheet. An authorized Apps Script edit trigger sends the response,
+records reply history, and suppresses repeat sends of an already delivered
+reply. See the [Google Apps Script setup guide](./google-apps-script/README.md)
+for spreadsheet setup, deployment, configuration, replying, and testing.
 
 For local development, set these values in `.env.local` after deployment:
 

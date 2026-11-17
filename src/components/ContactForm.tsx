@@ -11,8 +11,8 @@ import {
 const topicOptions = [
   "Membership",
   "Training programs",
-  "Personal training",
-  "Trial booking",
+  "Personal training enquiry",
+  "Free trial enquiry",
   "General enquiry",
 ];
 
@@ -63,7 +63,7 @@ export default function ContactForm({
         plan: String(values.get("plan") ?? "").trim(),
         message: String(values.get("message") ?? "").trim(),
       };
-    } else if (topic === "Trial booking") {
+    } else if (topic === "Free trial enquiry" || topic === "Trial booking") {
       submission = {
         ...common,
         operation: "trial",
@@ -96,10 +96,15 @@ export default function ContactForm({
         ...submission,
         submissionId,
       });
+      const emailDeliveryFailed =
+        result.emailDelivery?.adminNotification === false ||
+        result.emailDelivery?.customerAcknowledgement === false;
       setStatus(
-        result.duplicate
-          ? "This enquiry was already received. The Levy team will follow up."
-          : "Thank you. Your enquiry has been sent to the Levy team.",
+        emailDeliveryFailed
+          ? "Your enquiry was received, but one or more email notifications could not be confirmed. The Levy team has your details."
+          : result.duplicate
+            ? "This enquiry was already received. The Levy team will follow up."
+            : "Thank you. Your enquiry was received. The Levy team will follow up.",
       );
       setStatusType("success");
       form.reset();
@@ -118,7 +123,7 @@ export default function ContactForm({
   }
 
   const isMembership = topic === "Membership";
-  const isTrial = topic === "Trial booking";
+  const isTrial = topic === "Free trial enquiry" || topic === "Trial booking";
 
   return (
     <form

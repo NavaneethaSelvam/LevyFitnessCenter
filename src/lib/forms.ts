@@ -30,6 +30,10 @@ export type EnquiryDraft<T = EnquirySubmission> = T extends EnquirySubmission
 type EnquiryResponse = {
   success: true;
   duplicate?: boolean;
+  emailDelivery?: {
+    adminNotification?: boolean;
+    customerAcknowledgement?: boolean;
+  };
 };
 
 export async function submitEnquiry(
@@ -69,5 +73,22 @@ export async function submitEnquiry(
     success: true,
     duplicate:
       "duplicate" in result && result.duplicate === true,
+    emailDelivery:
+      "emailDelivery" in result &&
+      typeof result.emailDelivery === "object" &&
+      result.emailDelivery !== null &&
+      "adminNotification" in result.emailDelivery &&
+      "customerAcknowledgement" in result.emailDelivery
+        ? {
+            adminNotification:
+              typeof result.emailDelivery.adminNotification === "boolean"
+                ? result.emailDelivery.adminNotification
+                : undefined,
+            customerAcknowledgement:
+              typeof result.emailDelivery.customerAcknowledgement === "boolean"
+                ? result.emailDelivery.customerAcknowledgement
+                : undefined,
+          }
+        : undefined,
   };
 }

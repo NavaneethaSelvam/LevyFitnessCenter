@@ -1,142 +1,158 @@
-# Levy Fitness Center enquiry forms
+# Levy Fitness Center enquiry integration
 
-This folder contains the Google Apps Script endpoint used by the website's
-contact, membership, and trial-booking forms. The project is not connected to a
-live spreadsheet until the owner completes the setup and deploys the script.
+The website's shared contact form posts to Next.js `/api/forms`. The server
+validates and forwards the request to this Apps Script Web App; the shared
+secret is never sent to or included in frontend code. Apps Script writes each
+enquiry to the `Enquiries` Google Sheet tab first, then attempts the admin
+notification and customer acknowledgement using `MailApp`.
 
-The browser posts to the Next.js endpoint at `/api/forms`. The Next.js server
-forwards validated submissions to Google Apps Script, so the deployment URL
-and shared secret stay server-side and are never exposed in browser JavaScript.
+The Google Sheet is the enquiry persistence layer for this project. The
+repository has no separate database or admin dashboard. Existing legacy tabs
+(`Contact Enquiries`, `Membership Enquiries`, and `Trial Bookings`) are not
+modified; new submissions use the unified `Enquiries` tab.
 
 ## 1. Create a Google Spreadsheet
 
-1. Sign in to the Google account that should own and receive the enquiries.
-2. Create a new Google Spreadsheet, for example **Levy Fitness Center Enquiries**.
+1. Sign in to the Google account that should own and receive enquiries.
+2. Create a spreadsheet, for example **Levy Fitness Center Enquiries**.
 3. Copy the spreadsheet ID from its URL:
 
    `https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit`
 
-The script creates and maintains these tabs:
+The script creates an `Enquiries` tab with these required columns:
 
-- `Contact Enquiries`
-- `Membership Enquiries`
-- `Trial Bookings`
+| Column | Purpose |
+| --- | --- |
+| Enquiry ID | Stable ID used to prevent duplicate submissions |
+| Customer Name, Email, Phone | Customer contact information |
+| Enquiry Type, Message | Enquiry category and submitted message |
+| Submission Date, Status | Record date and processing state |
+| Admin Reply | Enter an admin response here to email the customer |
+| Email Delivery Status | Summary of admin and customer email delivery |
 
-Each tab receives its header row automatically. Do not rename or reorder those
-headers after setup.
+Additional columns store each email's individual status, trial/membership
+details, reply history, reply delivery status, and a hidden reply deduplication
+hash. Do not rename or reorder the columns. `initializeSheets` creates the
+sheet and installs the edit trigger; it does not alter existing legacy tabs.
 
 ## 2. Create and authorize the Apps Script
 
-1. In the spreadsheet, select **Extensions → Apps Script**.
-2. In the Apps Script editor, open `Code.gs`, remove its starter content, and
-   paste the complete contents of this folder's `Code.gs`.
-3. Save the project.
-4. Open **Project Settings → Script Properties → Add script property** and add:
+1. In the spreadsheet, choose **Extensions → Apps Script**.
+2. Replace the editor's `Code.gs` with the complete contents of this folder's
+   [`Code.gs`](./Code.gs), then save.
+3. In **Project Settings → Script Properties**, add:
 
    | Property | Value |
    | --- | --- |
-   | `SPREADSHEET_ID` | The ID copied from the spreadsheet URL |
-   | `API_SHARED_SECRET` | A new, randomly generated secret with at least 32 bytes of entropy |
+   | `SPREADSHEET_ID` | The ID from the spreadsheet URL |
+   | `API_SHARED_SECRET` | A new random secret with at least 32 bytes of entropy |
+   | `ADMIN_EMAIL` | The fitness center address that should receive enquiries and replies |
 
-   Keep the secret private. Do not put it in website code, a `NEXT_PUBLIC_`
-   variable, or a committed file. Generate a different secret for each
-   deployment. For example, generate one locally with:
+   Keep the shared secret private. Do not put it in website code, a
+   `NEXT_PUBLIC_` variable, or a committed file. Generate a secret locally, for
+   example:
 
    ```powershell
    node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
    ```
 
-   Copy it directly into Script Properties and the server-side environment;
-   do not paste it into source files or chat.
-5. In the function selector, choose `initializeSheets` and click **Run**.
-   Review and approve the requested Google Sheets authorization. This creates
-   the three tabs and their headers.
-6. Confirm all three tabs exist in the spreadsheet.
+4. Choose `initializeSheets` in the function selector and click **Run**.
+   Approve the requested spreadsheet and email permissions while signed in as
+   the spreadsheet owner. This creates the `Enquiries` tab and installs the
+   spreadsheet edit trigger used for admin replies.
+5. Confirm the tab and header row exist. Confirm the installable trigger is
+   listed under **Triggers** in Apps Script.
 
-If the Google Workspace administrator blocks public web apps, ask the
-administrator to allow the required deployment access before continuing.
+If a Google Workspace administrator blocks public web apps or Gmail sending,
+ask them to allow the required deployment and authorization.
 
 ## 3. Deploy as a Web App
 
-1. In Apps Script, choose **Deploy → New deployment**.
-2. Select the gear icon and choose **Web app**.
-3. Set **Execute as** to **Me** so rows are written using the spreadsheet
-   owner's authorization.
-4. Set **Who has access** to **Anyone** so the website server can call the web
-   app without a Google sign-in. The shared secret is checked by `Code.gs`
-   before any sheet is changed.
-5. Click **Deploy**, complete any authorization prompt, and copy the Web app
-   URL ending in `/exec`.
+1. Choose **Deploy → New deployment**, then select **Web app**.
+2. Set **Execute as** to **Me**.
+3. Set **Who has access** to **Anyone** so the website server can call it
+   without a Google sign-in. `Code.gs` validates the shared secret before
+   changing data or sending mail.
+4. Deploy and copy the Web app URL ending in `/exec`.
 
-The deployment URL is configuration, not a credential. The shared secret is
-private. If `Code.gs` changes later, create a new version and update the
-deployment to use it.
+The unauthenticated `GET` health check reports the service name and whether
+required Script Properties are present; it does not expose their values.
+After code changes, deploy a new version of the Web App. The existing
+deployment does not automatically use saved editor changes.
 
 ## 4. Configure the website
 
-For local development, create a root-level `.env.local` (do not replace
-`.env.example`) and set:
+For local development, create `.env.local` in the repository root and set:
 
 ```dotenv
 GOOGLE_APPS_SCRIPT_URL=https://script.google.com/macros/s/DEPLOYMENT_ID/exec
 GOOGLE_APPS_SCRIPT_SHARED_SECRET=your-private-random-secret
 ```
 
-Use the exact Web app URL and the same secret stored in Apps Script's
-`API_SHARED_SECRET` property. `.env.local` is ignored by Git. Restart `npm run
-dev` after changing environment variables.
+Use the exact Web App URL and the same secret set as `API_SHARED_SECRET`.
+`.env.local` is ignored by Git. Restart the development server after changing
+environment variables.
 
-For a hosted site, configure both variables in the hosting provider's
-**server-side environment settings**, then redeploy. Never prefix either
-variable with `NEXT_PUBLIC_`. `.env.example` contains the variable names only.
+For production, configure both variables as server-side environment variables
+in the hosting provider and redeploy. Never prefix either variable with
+`NEXT_PUBLIC_`. The checked-in `.env.example` contains blank placeholders only.
 
-## 5. Test each form
+## 5. Admin replies
 
-After configuration, start the site and submit each form with test data you
-control. Verify the resulting row in the corresponding sheet tab:
+Open the `Enquiries` tab and enter a response in that row's `Admin Reply`
+cell. The authorized edit trigger sends the response to the customer's email,
+adds a timestamped entry to `Reply History`, sets `Reply Delivery Status`,
+and updates the enquiry `Status`. Editing another column will not send a reply.
+An identical reply already marked sent is not sent again. If a reply fails,
+`Reply Delivery Status` is `failed`; after correcting the issue, select
+`retryFailedReplies` in Apps Script and run it manually.
 
-1. **Contact:** on `/contact`, enter a name, email, phone, subject, and message.
-2. **Membership:** on `/membership`, choose a plan and send the membership
-   enquiry. A plan selected from a pricing-card link is preselected.
-3. **Trial booking:** on `/contact`, choose **Trial booking** as the subject,
-   then enter a preferred date, time, and training interest.
+Only give spreadsheet edit access to staff permitted to view and reply to
+customer enquiries. Anyone with edit access to the `Admin Reply` column can
+cause an email to be sent to a listed customer.
 
-The existing project did not have a separate trial-booking form. The contact
-form now exposes trial booking as a subject and displays the required date,
-time, and interest fields while retaining the existing form and page layout.
+## 6. Test and verify
 
-The form displays success only after Apps Script confirms a row was saved (or
-confirms that the same submission was already received). If the endpoint is
-not configured or a request fails, the form displays an error instead. Do not
-consider the integration live until these test rows are visible in Sheets.
+After deployment and website configuration, submit test enquiries using
+addresses and phone numbers you control:
 
-## 6. Data and duplicate handling
+1. Contact/general or personal-training enquiry from `/contact`.
+2. Free-trial enquiry from `/contact`, including date, time, and training
+   interest.
+3. Membership enquiry from `/membership` and from a membership-plan link.
+4. Check the `Enquiries` row, email delivery status, admin inbox, and customer
+   acknowledgement inbox (including spam folders).
+5. Enter a reply in `Admin Reply`, then verify the customer receives it and
+   reply history/status are updated. Edit the same reply again to confirm it
+   is not sent twice.
+6. To test duplicate protection, replay the same request ID through the
+   server route; it should return the existing record without adding a row or
+   re-sending emails.
+7. To test email failure handling, use a controlled test deployment where
+   `MailApp.sendEmail` is made to fail while Sheets access remains authorized.
+   Verify the enquiry remains saved and the failed delivery is shown in the
+   sheet. Restore the normal mail function, deploy it, and run
+   `retryFailedEnquiryEmails`; only failed deliveries are retried.
 
-- Each operation writes to its own tab with a submission timestamp.
-- Required fields and basic email, phone, date, and time formats are validated
-  by both the website server and Apps Script.
-- A submission ID is retained across retries of the same form values. Apps
-  Script uses a script-wide lock and a six-hour cache to avoid adding the same
-  submission twice.
-- User text that could be interpreted as a spreadsheet formula is stored as
-  plain text.
-- Form contents and secrets are not written to application logs.
+Email failures do not remove an enquiry. The website reports that the enquiry
+was received but does not confirm delivery when Apps Script reports an email
+failure. `retryFailedEnquiryEmails` retries only targets marked `failed` and
+does not resend targets marked `sent`.
 
-## Common errors
+## Troubleshooting
 
-| Message or symptom | What to check |
+| Symptom | Check |
 | --- | --- |
-| “Online form submissions are not configured yet” | Set both variables in `.env.local` or the hosting environment, then restart/redeploy. |
-| “The enquiry service URL is invalid” | Use the HTTPS Apps Script Web app URL ending in `/macros/s/.../exec`. |
-| “The enquiry service authorization failed” | Ensure `GOOGLE_APPS_SCRIPT_SHARED_SECRET` exactly matches `API_SHARED_SECRET` in Script Properties. |
-| “The enquiry service has not been configured” | Set `SPREADSHEET_ID` and `API_SHARED_SECRET` in Apps Script Script Properties, then run `initializeSheets`. |
-| “The enquiry service returned an invalid response” | Check that the deployment is accessible as **Anyone**, executes as **Me**, and that the latest `Code.gs` version is deployed. |
-| A sheet tab or row is missing | Confirm the spreadsheet ID, run `initializeSheets`, and check that the Apps Script owner can edit the spreadsheet. |
-| “The target sheet headers need to be restored” | Restore the exact header row documented in `Code.gs`; the script will not overwrite mismatched headers or existing data. |
-| Deployment or authorization is blocked | Check Google Workspace administrator policies and approve the spreadsheet authorization while signed in as the owner. |
+| “Online form submissions are not configured yet” | Set both server environment variables and restart/redeploy. |
+| “The enquiry service URL is invalid” | Use the HTTPS Apps Script Web App URL ending in `/macros/s/.../exec`. |
+| Authorization error | Match `GOOGLE_APPS_SCRIPT_SHARED_SECRET` exactly to `API_SHARED_SECRET`. |
+| Apps Script says not configured | Set `SPREADSHEET_ID`, `API_SHARED_SECRET`, and `ADMIN_EMAIL` in Script Properties. |
+| Service returns an invalid response | Check Web App access, deployment version, authorization, and Apps Script execution logs. |
+| Missing sheet row | Confirm spreadsheet ID, run `initializeSheets`, and check script-owner edit permission. |
+| Email status is failed | Check `ADMIN_EMAIL`, Apps Script email authorization/quota, and execution logs; then run `retryFailedEnquiryEmails`. |
+| Reply is not sent | Confirm the installable edit trigger exists, enter the reply in the `Admin Reply` column, and check `Reply Delivery Status`. |
+| Header validation error | Restore the `Enquiries` headers exactly; do not overwrite existing data. |
 
-The endpoint is proxied through the site's server to avoid browser CORS
-limitations. A public web-app deployment should still be monitored for unusual
-traffic; the shared secret prevents direct unauthenticated writes to the
-spreadsheet. Restrict spreadsheet sharing to staff who need access to enquiry
-data.
+The shared secret protects the write endpoint but does not replace sensible
+deployment and data-access controls. Restrict spreadsheet sharing to staff
+who need the enquiry data.

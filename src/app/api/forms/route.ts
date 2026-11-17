@@ -146,7 +146,11 @@ export async function POST(request: Request) {
 
   let body: unknown;
   try {
-    body = await request.json();
+    const bodyText = await request.text();
+    if (new TextEncoder().encode(bodyText).byteLength > MAX_BODY_BYTES) {
+      return responseError("The submitted form is too large.", 413);
+    }
+    body = JSON.parse(bodyText);
   } catch {
     return responseError("The submitted form data is not valid JSON.", 400);
   }
@@ -219,9 +223,20 @@ export async function POST(request: Request) {
       return responseError(message, 502);
     }
 
+    const emailDelivery =
+      isRecord(result) && isRecord(result.emailDelivery) &&
+      typeof result.emailDelivery.adminNotification === "boolean" &&
+      typeof result.emailDelivery.customerAcknowledgement === "boolean"
+        ? {
+            adminNotification: result.emailDelivery.adminNotification,
+            customerAcknowledgement: result.emailDelivery.customerAcknowledgement,
+          }
+        : undefined;
+
     return NextResponse.json({
       success: true,
       duplicate: result.duplicate === true,
+      ...(emailDelivery ? { emailDelivery } : {}),
     });
   } catch {
     return responseError(
